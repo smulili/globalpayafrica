@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 4%;
+    --foreground: 220 20% 93%;
+
+    --card: 220 17% 8%;
+    --card-foreground: 220 20% 93%;
+
+    --popover: 220 17% 8%;
+    --popover-foreground: 220 20% 93%;
+
+    --primary: 177 100% 32%;
+    --primary-foreground: 220 20% 4%;
+
+    --secondary: 220 17% 12%;
+    --secondary-foreground: 220 20% 93%;
+
+    --muted: 220 10% 15%;
+    --muted-foreground: 220 10% 55%;
+
+    --accent: 45 90% 49%;
+    --accent-foreground: 220 20% 4%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 220 20% 93%;
+
+    --border: 220 10% 18%;
+    --input: 220 10% 18%;
+    --ring: 177 100% 32%;
+
+    --radius: 0.75rem;
+
+    --success: 145 63% 42%;
+    --success-foreground: 220 20% 4%;
+    --danger: 0 84% 60%;
+
+    --sidebar-background: 220 17% 6%;
+    --sidebar-foreground: 220 20% 93%;
+    --sidebar-primary: 177 100% 32%;
+    --sidebar-primary-foreground: 220 20% 4%;
+    --sidebar-accent: 220 17% 12%;
+    --sidebar-accent-foreground: 220 20% 93%;
+    --sidebar-border: 220 10% 18%;
+    --sidebar-ring: 177 100% 32%;
+
+    --font-display: 'Montserrat', sans-serif;
+    --font-body: 'Inter', sans-serif;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}
+
+@layer utilities {
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(45, 90%, 49%), hsl(35, 90%, 55%));
+  }
+
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-sm border border-border/50 rounded-xl;
+  }
+
+  .pulse-green {
+    animation: pulseGreen 2s infinite;
+  }
+
+  .pulse-red {
+    animation: pulseRed 2s infinite;
+  }
+
+  .ticker-scroll {
+    animation: tickerScroll 30s linear infinite;
+  }
+}
+
+@keyframes pulseGreen {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes pulseRed {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes tickerScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}

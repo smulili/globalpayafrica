@@ -1,0 +1,317 @@
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ArrowDownToLine, Smartphone, Coins, Copy, Check, Loader2, CreditCard, Building2, Phone } from 'lucide-react';
+import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useSearchParams } from 'react-router-dom';
+import PaystackPop from '@paystack/inline-js';
+
+const USDT_NETWORKS = [
+  { name: 'ERC 20 (Ethereum)', address: '0xeA64EA750eA1958f17C853a72cDBc83f8d6C71f7' },
+  { name: 'Solana', address: 'HQHjVNhMKwPrUxnsnAgqUAVRrMLhLr6nnK1zWA3z2uha' },
+  { name: 'Tron (TRC 20)', address: 'TMCas22AMA9xuuESyEGJugjwC4eMK81HJa' },
+  { name: 'XPL', address: '0xeA64EA750eA1958f17C853a72cDBc83f8d6C71f7' },
+  { name: 'BEP 20 (BSC)', address: '0xeA64EA750eA1958f17C853a72cDBc83f8d6C71f7' },
+];
+
+const BTC_ADDRESS = 'bc1qjczcmj5cpzmlju38m7ck7pqssq3zecz5dma0ww';
+
+type PaymentChannel = 'mpesa' | 'airtel' | 'bank' | null;
+
+const PAYMENT_CHANNELS = [
+  { id: 'mpesa' as PaymentChannel, name: 'M-Pesa', icon: Phone, description: 'STK Push to your phone', color: 'text-primary', bgColor: 'bg-primary/10 border-primary/20' },
+  { id: 'airtel' as PaymentChannel, name: 'Airtel Money', icon: Smartphone, description: 'STK Push to your phone', color: 'text-destructive', bgColor: 'bg-destructive/10 border-destructive/20' },
+  { id: 'bank' as PaymentChannel, name: 'Bank / Card', icon: Building2, description: 'Pay via bank or card', color: 'text-accent', bgColor: 'bg-accent/10 border-accent/20' },
+];
+
+const DepositPage = () => {
+  const [method, setMethod] = useState<'mobile' | 'crypto' | null>(null);
+  const [channel, setChannel] = useState<PaymentChannel>(null);
+  const [copiedAddr, setCopiedAddr] = useState<string | null>(null);
+  const [amount, setAmount] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { profile, refreshProfile } = useAuth();
+  const [searchParams] = useSearchParams();
+
+  // ✅ webhook-safe verification if redirected from Paystack
+  useEffect(() => {
+    const reference = searchParams.get('reference') || searchParams.get('trxref');
+    if (reference) verifyPayment(reference);
+  }, [searchParams]);
+
+  const copyAddress = (addr: string) => {
+    navigator.clipboard.writeText(addr);
+    setCopiedAddr(addr);
+    toast.success('Address copied!');
+    setTimeout(() => setCopiedAddr(null), 2000);
+  };
+
+  // ✅ function to verify payment via Supabase backend
+  const verifyPayment = async (reference: string) => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('paystack-verify', { body: { reference } });
+      if (error) throw error;
+
+      if (data.status === 'completed') {
+        toast.success(`Deposit of KSH ${data.amount_ksh} confirmed! 🎉`);
+        await refreshProfile(); // auto-update balance
+      } else if (data.status === 'failed') {
+        toast.error('Payment failed');
+      } else {
+        toast.info('Payment still processing, check again later');
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Verification failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Paystack inline popup
+  const payWithPaystack = () => {
+    const amountNum = parseFloat(amount);
+    if (!amountNum || amountNum < 10) {
+      toast.error('Minimum deposit is KSH 10');
+      return;
+    }
+    if (!profile?.email) {
+      toast.error('User email not found');
+      return;
+    }
+
+    const handler = PaystackPop.setup({
+      key: 'pk_live_db02edc656718a8a184b9e1c7f0632396d3f3bfa', // public key
+      email: profile.email,
+      amount: amountNum * 100,
+      currency: 'KES',
+      channels: ['card', 'bank', 'ussd', 'mobile_money'],
+      ref: '' + Math.floor(Math.random() * 1000000000 + 1),
+      onClose: () => toast.error('Payment cancelled'),
+      callback: (response: any) => verifyPayment(response.reference),
+    });
+
+    handler.openIframe();
+  };
+
+  const amountNum = parseFloat(amount) || 0;
+  const usdEquiv = (amountNum / 129).toFixed(2);
+
+  return (
+    <div className="max-w-2xl mx-auto space-y-6">
+      <div className="flex items-center gap-3 mb-2">
+        <ArrowDownToLine className="h-6 w-6 text-primary" />
+        <h1 className="text-2xl font-display font-bold text-foreground">Deposit</h1>
+      </div>
+
+      {!method ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <button
+            onClick={() => setMethod('mobile')}
+            className="glass-card p-6 text-left hover:border-primary/50 transition-all group"
+          >
+            <Smartphone className="h-10 w-10 text-primary mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="font-display font-semibold text-foreground mb-1">Mobile Money</h3>
+            <p className="text-sm text-muted-foreground">M-Pesa, Airtel Money, Bank</p>
+            <p className="text-xs text-primary mt-2">STK Push & Paystack Checkout</p>
+          </button>
+          <button
+            onClick={() => setMethod('crypto')}
+            className="glass-card p-6 text-left hover:border-primary/50 transition-all group"
+          >
+            <Coins className="h-10 w-10 text-accent mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="font-display font-semibold text-foreground mb-1">Crypto (USDT / BTC)</h3>
+            <p className="text-sm text-muted-foreground">Send to network address</p>
+            <p className="text-xs text-accent mt-2">Multiple networks available</p>
+          </button>
+        </div>
+      ) : method === 'mobile' ? (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-display font-semibold text-foreground">Mobile Money Deposit</h3>
+            <Button variant="ghost" size="sm" onClick={() => { setMethod(null); setChannel(null); }}>← Back</Button>
+          </div>
+
+          {!channel ? (
+            <div className="space-y-3">
+              <p className="text-sm text-muted-foreground">Choose your payment method:</p>
+              <div className="grid grid-cols-1 gap-3">
+                {PAYMENT_CHANNELS.map((ch) => (
+                  <button
+                    key={ch.id}
+                    onClick={() => setChannel(ch.id)}
+                    className={`glass-card p-4 text-left hover:scale-[1.02] transition-all flex items-center gap-4 border ${ch.bgColor}`}
+                  >
+                    <div className={`p-3 rounded-xl ${ch.bgColor}`}>
+                      <ch.icon className={`h-6 w-6 ${ch.color}`} />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className={`font-display font-semibold ${ch.color}`}>{ch.name}</h4>
+                      <p className="text-xs text-muted-foreground">{ch.description}</p>
+                    </div>
+                    <span className="text-muted-foreground">→</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="glass-card p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {PAYMENT_CHANNELS.find(c => c.id === channel) && (() => {
+                    const ch = PAYMENT_CHANNELS.find(c => c.id === channel)!;
+                    return (
+                      <>
+                        <ch.icon className={`h-5 w-5 ${ch.color}`} />
+                        <span className={`font-display font-semibold ${ch.color}`}>{ch.name}</span>
+                      </>
+                    );
+                  })()}
+                </div>
+                <Button variant="ghost" size="sm" onClick={() => setChannel(null)}>Change</Button>
+              </div>
+
+              <div>
+                <Label htmlFor="deposit-amount">Amount (KSH)</Label>
+                <Input
+                  id="deposit-amount"
+                  type="number"
+                  min="10"
+                  placeholder="Enter amount (min KSH 10)"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="bg-secondary border-border text-lg"
+                />
+                {amountNum > 0 && (
+                  <p className="text-xs text-muted-foreground mt-1">≈ ${usdEquiv} USD</p>
+                )}
+              </div>
+
+              {amountNum >= 10 && (
+                <div className="bg-secondary/50 rounded-lg p-3 text-sm space-y-1">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Amount</span>
+                    <span className="text-foreground">KSH {amountNum.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Fee (1%)</span>
+                    <span className="text-foreground">KSH {(amountNum * 0.01).toFixed(2)}</span>
+                  </div>
+                  <div className="border-t border-border pt-1 flex justify-between font-semibold">
+                    <span className="text-muted-foreground">You receive</span>
+                    <span className="text-primary">KSH {(amountNum * 0.99).toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-muted-foreground">USD equivalent</span>
+                    <span className="text-muted-foreground">${usdEquiv}</span>
+                  </div>
+                </div>
+              )}
+
+              <Button
+                size="lg"
+                className="w-full"
+                disabled={loading || amountNum < 10}
+                onClick={payWithPaystack}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    {channel === 'bank' ? <CreditCard className="mr-2 h-5 w-5" /> : <Phone className="mr-2 h-5 w-5" />}
+                    {channel === 'bank'
+                      ? `Pay KSH ${amountNum.toLocaleString()} via Bank/Card`
+                      : `Pay KSH ${amountNum.toLocaleString()} via ${channel === 'mpesa' ? 'M-Pesa' : 'Airtel Money'}`
+                    }
+                  </>
+                )}
+              </Button>
+
+              <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                <span>🔒 Secured by</span>
+                <span className="font-semibold text-foreground">Paystack</span>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <CryptoDeposit copiedAddr={copiedAddr} copyAddress={copyAddress} onBack={() => setMethod(null)} />
+      )}
+    </div>
+  );
+};
+
+const CryptoDeposit = ({
+  copiedAddr,
+  copyAddress,
+  onBack,
+}: {
+  copiedAddr: string | null;
+  copyAddress: (addr: string) => void;
+  onBack: () => void;
+}) => (
+  <div className="space-y-4">
+    <div className="flex items-center justify-between">
+      <h3 className="font-display font-semibold text-foreground">Send Crypto to Deposit</h3>
+      <Button variant="ghost" size="sm" onClick={onBack}>← Back</Button>
+    </div>
+
+    <div className="glass-card p-5">
+      <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+        <Coins className="h-4 w-4 text-primary" /> USDT Networks
+      </h4>
+      <div className="space-y-3">
+        {USDT_NETWORKS.map((net) => (
+          <div key={net.name} className="bg-secondary/50 rounded-lg p-3">
+            <p className="text-xs text-primary font-medium mb-1">{net.name}</p>
+            <div className="flex items-center gap-2">
+              <code className="text-xs text-foreground bg-background/50 px-2 py-1 rounded flex-1 overflow-hidden text-ellipsis">
+                {net.address}
+              </code>
+              <button
+                onClick={() => copyAddress(net.address)}
+                className="shrink-0 text-muted-foreground hover:text-primary transition-colors"
+              >
+                {copiedAddr === net.address ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div className="glass-card p-5">
+      <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+        <Coins className="h-4 w-4 text-accent" /> BTC
+      </h4>
+      <div className="bg-secondary/50 rounded-lg p-3">
+        <p className="text-xs text-accent font-medium mb-1">Bitcoin Network</p>
+        <div className="flex items-center gap-2">
+          <code className="text-xs text-foreground bg-background/50 px-2 py-1 rounded flex-1 overflow-hidden text-ellipsis">
+            {BTC_ADDRESS}
+          </code>
+          <button
+            onClick={() => copyAddress(BTC_ADDRESS)}
+            className="shrink-0 text-muted-foreground hover:text-primary transition-colors"
+          >
+            {copiedAddr === BTC_ADDRESS ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div className="bg-accent/10 border border-accent/20 rounded-lg p-3">
+      <p className="text-xs text-accent">
+        ⚠️ Only send USDT or BTC to the correct network address. Sending to the wrong network may result in permanent loss of funds. A deposit fee of 1% applies.
+      </p>
+    </div>
+  </div>
+);
+
+export default DepositPage;
