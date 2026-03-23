@@ -53,7 +53,7 @@ const WelcomeBonusDialog: React.FC<WelcomeBonusDialogProps> = ({ open, onClose }
           </div>
 
           <Button onClick={onClose} className="w-full text-sm sm:text-base py-2 sm:py-3">
-            Claim your Bonus Now 🚀
+            Claim  Bonus Now 🚀
           </Button>
 
         </div>
