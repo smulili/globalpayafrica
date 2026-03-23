@@ -12,7 +12,7 @@ const LandingPage = () => {
       <header className="border-b border-border">
         <div className="container mx-auto flex items-center justify-between h-16 px-4">
           <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="GlobalPay Logo"/>
+            <img src="/logo2.png" alt="GlobalPay Logo" className="h-8 w-auto" />
             <span className="font-display font-bold text-xl text-foreground">
               Global<span className="text-primary">Pay</span> Africa
             </span>
