@@ -67,7 +67,7 @@ const LandingPage = () => {
       <section className="container mx-auto px-4 py-16">
         <div className="grid md:grid-cols-3 gap-6">
           <div className="glass-card p-6 text-center">
-            <img src="/logo2.png" alt="GlobalPay Logo" className="h-8 w-auto" />
+            <img src="/logo.png" alt="GlobalPay Logo" className="h-8 w-auto" />
             <h3 className="font-display font-semibold text-foreground mb-2">Secure & Trusted</h3>
             <p className="text-sm text-muted-foreground">Bank-grade encryption for all transactions</p>
           </div>
