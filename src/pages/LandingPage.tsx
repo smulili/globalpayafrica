@@ -12,7 +12,7 @@ const LandingPage = () => {
       <header className="border-b border-border">
         <div className="container mx-auto flex items-center justify-between h-16 px-4">
           <div className="flex items-center gap-2">
-            <img src="./logo2.png" alt="GlobalPay Logo"/>
+            <img src="/logo.png" alt="GlobalPay Logo"/>
             <span className="font-display font-bold text-xl text-foreground">
               Global<span className="text-primary">Pay</span> Africa
             </span>
@@ -67,7 +67,7 @@ const LandingPage = () => {
       <section className="container mx-auto px-4 py-16">
         <div className="grid md:grid-cols-3 gap-6">
           <div className="glass-card p-6 text-center">
-            <img src="/logo.png" alt="GlobalPay Logo" className="h-10 w-10 text-primary mx-auto mb-3" />
+            <img src="/logo2.png" alt="GlobalPay Logo" className="h-8 w-auto" />
             <h3 className="font-display font-semibold text-foreground mb-2">Secure & Trusted</h3>
             <p className="text-sm text-muted-foreground">Bank-grade encryption for all transactions</p>
           </div>

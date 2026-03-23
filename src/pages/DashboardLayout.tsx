@@ -62,7 +62,7 @@ const DashboardLayout = () => {
             <div className="flex items-center gap-2">
               <SidebarTrigger className="text-foreground" />
               <img
-                src="./logo.png"
+                src="./logo2.png"
                 alt="GlobalPay Logo"
                 className="h-8 w-auto"
               />
