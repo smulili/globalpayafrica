@@ -36,7 +36,7 @@ const WelcomeBonusDialog: React.FC<WelcomeBonusDialogProps> = ({ open, onClose }
           
           <div className="bg-accent/10 border border-accent/30 rounded-xl p-3 sm:p-5">
             <p className="text-xs sm:text-sm text-muted-foreground mb-1">
-              Your Free Bonus
+              Your Free Promo Gift
             </p>
             <p className="text-2xl sm:text-4xl font-display font-bold text-accent">
               KSH 500
@@ -48,12 +48,12 @@ const WelcomeBonusDialog: React.FC<WelcomeBonusDialogProps> = ({ open, onClose }
 
           <div className="bg-secondary/50 rounded-lg p-2 sm:p-3">
             <p className="text-[10px] sm:text-xs text-muted-foreground">
-              🔒 Deposit at least <strong className="text-foreground">KSH 100</strong> to unlock your bonus and start withdrawing
+              🔒 Deposit at least <strong className="text-foreground">KSH 100($0.78)</strong> to unlock your Gift and  withdraw instantly
             </p>
           </div>
 
           <Button onClick={onClose} className="w-full text-sm sm:text-base py-2 sm:py-3">
-            Claim  Bonus Now 🚀
+            Claim Gift Now 🚀
           </Button>
 
         </div>

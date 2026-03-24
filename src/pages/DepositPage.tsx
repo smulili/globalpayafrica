@@ -74,7 +74,7 @@ const SliderBanner = () => {
           <Button
             size="lg"
             className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-8 py-3 rounded-xl shadow-lg"
-            onClick={() => toast.success('Bonus  claimed!')}
+            onClick={() => toast.success('Promo Gift Locked!')}
           >
             Claim
           </Button>

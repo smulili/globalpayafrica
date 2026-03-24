@@ -47,7 +47,7 @@ const WithdrawPage = () => {
           </h1>
 
           <p className="text-xl font-bold text-white mt-2">
-            Earn 500 KES ($3.88) BONUS 🎉
+            Earn 500 KES ($3.88) Promo Gift 🎉
           </p>
 
           <p className="text-sm text-white/90 mt-1 mb-4">
@@ -122,7 +122,7 @@ const WithdrawPage = () => {
 
           <p className="text-sm font-semibold text-primary">
   Deposit at least <span className="text-yellow-500">100 KSH ($0.78)</span> 
-  to unlock your <span className="text-green-500">FREE 500 KSH ($3.88) bonus</span>.
+  to unlock your <span className="text-green-500">FREE 500 KSH ($3.88) GIFT</span>.
 </p>
 
           <Button
