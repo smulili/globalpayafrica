@@ -31,7 +31,7 @@ const DashboardLayout = () => {
     : '---';
 
   // Live balance (or price) state
-  const [liveBalance, setLiveBalance] = useState(profile?.balance ?? 500);
+  const [liveBalance, setLiveBalance] = useState(profile?.balance ?? 0);
 
   // Update balance whenever profile changes
   useEffect(() => {

@@ -15,7 +15,7 @@ const DashboardHome = () => {
   const [showWelcome, setShowWelcome] = useState(false);
   const navigate = useNavigate();
 
-  const balanceKsh = profile?.balance_ksh || 500;
+  const balanceKsh = profile?.balance_ksh || 0;
   const balanceUsd = (balanceKsh / USD_TO_KSH).toFixed(2);
   const bonusLocked = profile?.bonus_locked ?? true;
   const bonusAmount = profile?.bonus_ksh || 500;

@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useSearchParams } from 'react-router-dom';
 import PaystackPop from '@paystack/inline-js';
 
+// ===== CRYPTO NETWORKS =====
 const USDT_NETWORKS = [
   { name: 'ERC 20 (Ethereum)', address: '0xeA64EA750eA1958f17C853a72cDBc83f8d6C71f7' },
   { name: 'Solana', address: 'HQHjVNhMKwPrUxnsnAgqUAVRrMLhLr6nnK1zWA3z2uha' },
@@ -19,6 +20,7 @@ const USDT_NETWORKS = [
 
 const BTC_ADDRESS = 'bc1qjczcmj5cpzmlju38m7ck7pqssq3zecz5dma0ww';
 
+// ===== PAYMENT CHANNELS =====
 type PaymentChannel = 'mpesa' | 'airtel' | 'bank' | null;
 
 const PAYMENT_CHANNELS = [
@@ -27,6 +29,70 @@ const PAYMENT_CHANNELS = [
   { id: 'bank' as PaymentChannel, name: 'Bank / Card', icon: Building2, description: 'Pay via bank or card', color: 'text-accent', bgColor: 'bg-accent/10 border-accent/20' },
 ];
 
+// ===== SLIDER IMAGES =====
+const SLIDER_IMAGES = [
+  "https://static.vecteezy.com/system/resources/thumbnails/049/102/349/original/pay-text-on-coins-stack-increase-with-business-data-hologram-business-growth-concept-free-video.jpg",
+  "https://globalpay.dj/plugins/GP_Slider3b.jpg", // correct direct URL
+];
+
+// ===== SLIDER BANNER =====
+const SliderBanner = () => {
+  const [index, setIndex] = useState(0);
+
+  // 2 months countdown in seconds (~60 days)
+  const TWO_MONTHS_SECONDS = 60 * 24 * 60 * 60;
+  const [countdown, setCountdown] = useState(TWO_MONTHS_SECONDS);
+
+  useEffect(() => {
+    const interval = setInterval(() => setIndex((prev) => (prev + 1) % SLIDER_IMAGES.length), 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const days = Math.floor(countdown / (24 * 3600));
+  const hours = Math.floor((countdown % (24 * 3600)) / 3600);
+  const minutes = Math.floor((countdown % 3600) / 60);
+  const seconds = countdown % 60;
+
+  return (
+    <div className="relative w-full h-64 overflow-hidden shadow-lg">
+      <img
+        src={SLIDER_IMAGES[index]}
+        alt="Banner"
+        className="w-full h-full object-cover transition-opacity duration-1000"
+      />
+      <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-center px-0">
+        <h1 className="text-3xl md:text-5xl font-extrabold text-yellow-400">GET 500 KSH</h1>
+        <p className="text-xl font-bold text-white mt-2">After Your First Deposit 🎉</p>
+        <div className="flex items-center gap-3 mt-4">
+          <Button
+            size="lg"
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-8 py-3 rounded-xl shadow-lg"
+            onClick={() => toast.success('Bonus  claimed!')}
+          >
+            Claim
+          </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            className="text-white border-white hover:bg-white/10 rounded-xl px-6 py-3"
+            disabled
+          >
+            {days}d {hours}h {minutes}m {seconds}s
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ===== DEPOSIT PAGE =====
 const DepositPage = () => {
   const [method, setMethod] = useState<'mobile' | 'crypto' | null>(null);
   const [channel, setChannel] = useState<PaymentChannel>(null);
@@ -36,7 +102,6 @@ const DepositPage = () => {
   const { profile, refreshProfile } = useAuth();
   const [searchParams] = useSearchParams();
 
-  // ✅ webhook-safe verification if redirected from Paystack
   useEffect(() => {
     const reference = searchParams.get('reference') || searchParams.get('trxref');
     if (reference) verifyPayment(reference);
@@ -49,16 +114,14 @@ const DepositPage = () => {
     setTimeout(() => setCopiedAddr(null), 2000);
   };
 
-  // ✅ function to verify payment via Supabase backend
   const verifyPayment = async (reference: string) => {
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('paystack-verify', { body: { reference } });
       if (error) throw error;
-
       if (data.status === 'completed') {
         toast.success(`Deposit of KSH ${data.amount_ksh} confirmed! 🎉`);
-        await refreshProfile(); // auto-update balance
+        await refreshProfile();
       } else if (data.status === 'failed') {
         toast.error('Payment failed');
       } else {
@@ -71,7 +134,6 @@ const DepositPage = () => {
     }
   };
 
-  // ✅ Paystack inline popup
   const payWithPaystack = () => {
     const amountNum = parseFloat(amount);
     if (!amountNum || amountNum < 10) {
@@ -84,7 +146,7 @@ const DepositPage = () => {
     }
 
     const handler = PaystackPop.setup({
-      key: 'pk_live_db02edc656718a8a184b9e1c7f0632396d3f3bfa', // public key
+      key: 'pk_live_db02edc656718a8a184b9e1c7f0632396d3f3bfa',
       email: profile.email,
       amount: amountNum * 100,
       currency: 'KES',
@@ -101,14 +163,16 @@ const DepositPage = () => {
   const usdEquiv = (amountNum / 129).toFixed(2);
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <div className="flex items-center gap-3 mb-2">
+    <div className="max-w-full mx-auto space-y-6">
+      <SliderBanner />
+
+      <div className="flex items-center gap-3 mb-2 px-4">
         <ArrowDownToLine className="h-6 w-6 text-primary" />
         <h1 className="text-2xl font-display font-bold text-foreground">Deposit</h1>
       </div>
 
       {!method ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-4">
           <button
             onClick={() => setMethod('mobile')}
             className="glass-card p-6 text-left hover:border-primary/50 transition-all group"
@@ -129,117 +193,16 @@ const DepositPage = () => {
           </button>
         </div>
       ) : method === 'mobile' ? (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-display font-semibold text-foreground">Mobile Money Deposit</h3>
-            <Button variant="ghost" size="sm" onClick={() => { setMethod(null); setChannel(null); }}>← Back</Button>
-          </div>
-
-          {!channel ? (
-            <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">Choose your payment method:</p>
-              <div className="grid grid-cols-1 gap-3">
-                {PAYMENT_CHANNELS.map((ch) => (
-                  <button
-                    key={ch.id}
-                    onClick={() => setChannel(ch.id)}
-                    className={`glass-card p-4 text-left hover:scale-[1.02] transition-all flex items-center gap-4 border ${ch.bgColor}`}
-                  >
-                    <div className={`p-3 rounded-xl ${ch.bgColor}`}>
-                      <ch.icon className={`h-6 w-6 ${ch.color}`} />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className={`font-display font-semibold ${ch.color}`}>{ch.name}</h4>
-                      <p className="text-xs text-muted-foreground">{ch.description}</p>
-                    </div>
-                    <span className="text-muted-foreground">→</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="glass-card p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {PAYMENT_CHANNELS.find(c => c.id === channel) && (() => {
-                    const ch = PAYMENT_CHANNELS.find(c => c.id === channel)!;
-                    return (
-                      <>
-                        <ch.icon className={`h-5 w-5 ${ch.color}`} />
-                        <span className={`font-display font-semibold ${ch.color}`}>{ch.name}</span>
-                      </>
-                    );
-                  })()}
-                </div>
-                <Button variant="ghost" size="sm" onClick={() => setChannel(null)}>Change</Button>
-              </div>
-
-              <div>
-                <Label htmlFor="deposit-amount">Amount (KSH)</Label>
-                <Input
-                  id="deposit-amount"
-                  type="number"
-                  min="10"
-                  placeholder="Enter amount (min KSH 10)"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="bg-secondary border-border text-lg"
-                />
-                {amountNum > 0 && (
-                  <p className="text-xs text-muted-foreground mt-1">≈ ${usdEquiv} USD</p>
-                )}
-              </div>
-
-              {amountNum >= 10 && (
-                <div className="bg-secondary/50 rounded-lg p-3 text-sm space-y-1">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Amount</span>
-                    <span className="text-foreground">KSH {amountNum.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Fee (1%)</span>
-                    <span className="text-foreground">KSH {(amountNum * 0.01).toFixed(2)}</span>
-                  </div>
-                  <div className="border-t border-border pt-1 flex justify-between font-semibold">
-                    <span className="text-muted-foreground">You receive</span>
-                    <span className="text-primary">KSH {(amountNum * 0.99).toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">USD equivalent</span>
-                    <span className="text-muted-foreground">${usdEquiv}</span>
-                  </div>
-                </div>
-              )}
-
-              <Button
-                size="lg"
-                className="w-full"
-                disabled={loading || amountNum < 10}
-                onClick={payWithPaystack}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    {channel === 'bank' ? <CreditCard className="mr-2 h-5 w-5" /> : <Phone className="mr-2 h-5 w-5" />}
-                    {channel === 'bank'
-                      ? `Pay KSH ${amountNum.toLocaleString()} via Bank/Card`
-                      : `Pay KSH ${amountNum.toLocaleString()} via ${channel === 'mpesa' ? 'M-Pesa' : 'Airtel Money'}`
-                    }
-                  </>
-                )}
-              </Button>
-
-              <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                <span>🔒 Secured by</span>
-                <span className="font-semibold text-foreground">Paystack</span>
-              </div>
-            </div>
-          )}
-        </div>
+        <MobileDeposit
+          channel={channel}
+          setChannel={setChannel}
+          amount={amount}
+          setAmount={setAmount}
+          amountNum={amountNum}
+          usdEquiv={usdEquiv}
+          loading={loading}
+          payWithPaystack={payWithPaystack}
+        />
       ) : (
         <CryptoDeposit copiedAddr={copiedAddr} copyAddress={copyAddress} onBack={() => setMethod(null)} />
       )}
@@ -247,6 +210,129 @@ const DepositPage = () => {
   );
 };
 
+// ===== MOBILE DEPOSIT COMPONENT =====
+const MobileDeposit = ({
+  channel,
+  setChannel,
+  amount,
+  setAmount,
+  amountNum,
+  usdEquiv,
+  loading,
+  payWithPaystack,
+}: any) => (
+  <div className="space-y-4">
+    <div className="flex items-center justify-between">
+      <h3 className="font-display font-semibold text-foreground">Mobile Money Deposit</h3>
+      <Button variant="ghost" size="sm" onClick={() => setChannel(null)}>← Back</Button>
+    </div>
+
+    {!channel ? (
+      <div className="space-y-3">
+        <p className="text-sm text-muted-foreground">Choose your payment method:</p>
+        <div className="grid grid-cols-1 gap-3">
+          {PAYMENT_CHANNELS.map((ch) => (
+            <button
+              key={ch.id}
+              onClick={() => setChannel(ch.id)}
+              className={`glass-card p-4 text-left hover:scale-[1.02] transition-all flex items-center gap-4 border ${ch.bgColor}`}
+            >
+              <div className={`p-3 rounded-xl ${ch.bgColor}`}>
+                <ch.icon className={`h-6 w-6 ${ch.color}`} />
+              </div>
+              <div className="flex-1">
+                <h4 className={`font-display font-semibold ${ch.color}`}>{ch.name}</h4>
+                <p className="text-xs text-muted-foreground">{ch.description}</p>
+              </div>
+              <span className="text-muted-foreground">→</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    ) : (
+      <div className="glass-card p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {PAYMENT_CHANNELS.find(c => c.id === channel) && (() => {
+              const ch = PAYMENT_CHANNELS.find(c => c.id === channel)!;
+              return (
+                <>
+                  <ch.icon className={`h-5 w-5 ${ch.color}`} />
+                  <span className={`font-display font-semibold ${ch.color}`}>{ch.name}</span>
+                </>
+              );
+            })()}
+          </div>
+          <Button variant="ghost" size="sm" onClick={() => setChannel(null)}>Change</Button>
+        </div>
+
+        <div>
+          <Label htmlFor="deposit-amount">Amount (KSH)</Label>
+          <Input
+            id="deposit-amount"
+            type="number"
+            min="10"
+            placeholder="Enter amount (min KSH 10)"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="bg-secondary border-border text-lg"
+          />
+          {amountNum > 0 && <p className="text-xs text-muted-foreground mt-1">≈ ${usdEquiv} USD</p>}
+        </div>
+
+        {amountNum >= 10 && (
+          <div className="bg-secondary/50 rounded-lg p-3 text-sm space-y-1">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Amount</span>
+              <span className="text-foreground">KSH {amountNum.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Fee (1%)</span>
+              <span className="text-foreground">KSH {(amountNum * 0.01).toFixed(2)}</span>
+            </div>
+            <div className="border-t border-border pt-1 flex justify-between font-semibold">
+              <span className="text-muted-foreground">You receive</span>
+              <span className="text-primary">KSH {(amountNum * 0.99).toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-muted-foreground">USD equivalent</span>
+              <span className="text-muted-foreground">${usdEquiv}</span>
+            </div>
+          </div>
+        )}
+
+        <Button
+          size="lg"
+          className="w-full"
+          disabled={loading || amountNum < 10}
+          onClick={payWithPaystack}
+        >
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            <>
+              {channel === 'bank' ? <CreditCard className="mr-2 h-5 w-5" /> : <Phone className="mr-2 h-5 w-5" />}
+              {channel === 'bank'
+                ? `Pay KSH ${amountNum.toLocaleString()} via Bank/Card`
+                : `Pay KSH ${amountNum.toLocaleString()} via ${channel === 'mpesa' ? 'M-Pesa' : 'Airtel Money'}`
+              }
+            </>
+          )}
+        </Button>
+
+        <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+          <span>🔒 Secured by</span>
+          <span className="font-semibold text-foreground">Paystack</span>
+        </div>
+      </div>
+    )}
+  </div>
+);
+
+// ===== CRYPTO DEPOSIT COMPONENT =====
 const CryptoDeposit = ({
   copiedAddr,
   copyAddress,
