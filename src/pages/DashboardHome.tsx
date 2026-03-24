@@ -85,7 +85,7 @@ const DashboardHome = () => {
                 KSH {bonusAmount.toLocaleString()} Promo Gift 🎁
               </p>
               <p className="text-xs text-muted-foreground">
-                First Deposit at least KSH 100($0.78) to get free 500 KSH ($3.88) and withdraw instantly!
+                Do First Deposit at least KSH 100($0.78) to get free 500 KSH ($3.88) and withdraw instantly!
               </p>
             </div>
           </div>
