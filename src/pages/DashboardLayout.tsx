@@ -63,7 +63,7 @@ const DashboardLayout = () => {
               <SidebarTrigger className="text-foreground" />
               <img
                 src="./logo.png"
-                alt="OmniPay Logo"
+                alt="AmbrePay Logo"
                 className="h-8 w-auto"
               />
             </div>

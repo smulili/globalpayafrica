@@ -172,7 +172,7 @@ const DashboardHome = () => {
           <span className="font-display font-bold text-accent text-sm">HII NI YETU. PAMOJA TWASONGA</span>
         </div>
         <p className="text-xs text-muted-foreground">
-          © 2024 OmniPay Africa. All rights reserved.
+          © 2024 AmbrePay Africa. All rights reserved.
         </p>
         <p className="text-xs text-muted-foreground mt-1">
           Send Money from M-Pesa to Crypto Instantly. Fast, secure payments across Africa.
