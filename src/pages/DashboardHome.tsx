@@ -82,10 +82,10 @@ const DashboardHome = () => {
             <Lock className="h-5 w-5 text-accent shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-semibold text-accent">
-                KSH {bonusAmount.toLocaleString()} Bonus 🎁
+                KSH {bonusAmount.toLocaleString()} Promo Gift 🎁
               </p>
               <p className="text-xs text-muted-foreground">
-                Locked — Deposit at least KSH 100 to unlock your bonus
+                — Deposit at least KSH 100($0.78) to get free 500 KSH ($3.88) and withdraw instantly!
               </p>
             </div>
           </div>

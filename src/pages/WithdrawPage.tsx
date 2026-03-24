@@ -47,7 +47,7 @@ const WithdrawPage = () => {
           </h1>
 
           <p className="text-xl font-bold text-white mt-2">
-            Earn 500 KES ($4) BONUS 🎉
+            Earn 500 KES ($3.88) BONUS 🎉
           </p>
 
           <p className="text-sm text-white/90 mt-1 mb-4">

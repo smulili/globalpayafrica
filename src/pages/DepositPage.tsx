@@ -32,7 +32,7 @@ const PAYMENT_CHANNELS = [
 // ===== SLIDER IMAGES =====
 const SLIDER_IMAGES = [
   "https://static.vecteezy.com/system/resources/thumbnails/049/102/349/original/pay-text-on-coins-stack-increase-with-business-data-hologram-business-growth-concept-free-video.jpg",
-  "https://globalpay.dj/plugins/GP_Slider3b.jpg", // correct direct URL
+  "https://content.mtfxgroup.com/uploads/image_2024_12_11_T15_28_05_064_Z_45054807eb.jpg", // correct direct URL
 ];
 
 // ===== SLIDER BANNER =====
@@ -68,7 +68,7 @@ const SliderBanner = () => {
         className="w-full h-full object-cover transition-opacity duration-1000"
       />
       <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-center px-0">
-        <h1 className="text-3xl md:text-5xl font-extrabold text-yellow-400">GET 500 KSH</h1>
+        <h1 className="text-3xl md:text-5xl font-extrabold text-yellow-400">GET 500 KSH($3.88)</h1>
         <p className="text-xl font-bold text-white mt-2">After Your First Deposit 🎉</p>
         <div className="flex items-center gap-3 mt-4">
           <Button
