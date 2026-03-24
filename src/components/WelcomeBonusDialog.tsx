@@ -23,7 +23,7 @@ const WelcomeBonusDialog: React.FC<WelcomeBonusDialogProps> = ({ open, onClose }
           </div>
 
           <h2 className="text-lg sm:text-2xl font-display font-bold text-foreground mb-1">
-            🎉 Welcome to GlobalPay Africa!
+            🎉 Welcome to OmniPay Africa!
           </h2>
 
           <p className="text-xs sm:text-sm text-muted-foreground">

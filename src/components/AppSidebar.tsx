@@ -33,10 +33,10 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r border-border">
       <div className="p-4 flex items-center gap-2">
-        <img src="/logo2.png" alt="GlobalPay" className="h-8 w-8" />
+        <img src="/logo2.png" alt="OmniPay" className="h-8 w-8" />
         {!collapsed && (
           <span className="font-display font-bold text-lg text-foreground">
-            Global<span className="text-primary">Pay</span>
+            Omni<span className="text-primary">Pay</span>
           </span>
         )}
       </div>

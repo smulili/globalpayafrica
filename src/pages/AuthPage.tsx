@@ -71,9 +71,9 @@ const AuthPage = () => {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <img src="/logo2.png" alt="GlobalPay Logo" className="h-10 w-10 text-primary" />
+            <img src="/logo2.png" alt="OmniPay Logo" className="h-10 w-10 text-primary" />
             <h1 className="text-3xl font-bold font-display text-foreground">
-              Global<span className="text-primary">Pay</span> Africa
+              Omni<span className="text-primary">Pay</span> Africa
             </h1>
           </div>
           <p className="text-muted-foreground">

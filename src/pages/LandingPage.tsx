@@ -12,9 +12,9 @@ const LandingPage = () => {
       <header className="border-b border-border">
         <div className="container mx-auto flex items-center justify-between h-16 px-4">
           <div className="flex items-center gap-2">
-            <img src="/logo2.png" alt="GlobalPay Logo" className="h-8 w-auto" />
+            <img src="/logo2.png" alt="OmniPay Logo" className="h-8 w-auto" />
             <span className="font-display font-bold text-xl text-foreground">
-              Global<span className="text-primary">Pay</span> Africa
+              Omni<span className="text-primary">Pay</span> Africa
             </span>
           </div>
           <div className="flex gap-3">
@@ -67,7 +67,7 @@ const LandingPage = () => {
       <section className="container mx-auto px-4 py-16">
         <div className="grid md:grid-cols-3 gap-6">
           <div className="glass-card p-6 text-center">
-            <img src="/logo.png" alt="GlobalPay Logo" className="h-8 w-auto" />
+            <img src="/logo.png" alt="OmniPay Logo" className="h-8 w-auto" />
             <h3 className="font-display font-semibold text-foreground mb-2">Secure & Trusted</h3>
             <p className="text-sm text-muted-foreground">Bank-grade encryption for all transactions</p>
           </div>
@@ -91,7 +91,7 @@ const LandingPage = () => {
             <span className="text-3xl">🇰🇪</span>
             <span className="font-display font-bold text-accent">HII NI YETU. PAMOJA TWASONGA</span>
           </div>
-          <p className="text-sm text-muted-foreground">© 2024 Global Pay Africa. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">© 2024 OmniPay Africa. All rights reserved.</p>
         </div>
       </footer>
     </div>
