@@ -104,6 +104,7 @@ const DashboardHome = () => {
             </div>
           </div>
         )}
+        
 
         <div className="grid grid-cols-2 gap-3 mt-6">
           <Button size="lg" onClick={() => handleSendReceive('deposit')} className="w-full">
